@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"Powerc20Worker/abi"
+	"Powerc20Worker/abi/powerc20"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -21,7 +21,7 @@ import (
 )
 
 var (
-	infuraURL       = "https://rpc.ankr.com/eth"
+	infuraURL       = "https://babel-api.testnet.iotex.io"
 	privateKey      string
 	contractAddress string
 	workerCount     int
@@ -30,7 +30,7 @@ var (
 
 func init() {
 	flag.StringVar(&privateKey, "privateKey", "", "Private key for the Ethereum account")
-	flag.StringVar(&contractAddress, "contractAddress", "0xca9b78435Be8267922E7Ac5cDE70401e7502c9cc", "Address of the Ethereum contract")
+	flag.StringVar(&contractAddress, "contractAddress", "0x48e76e586667Fb0d907e9805655fB1A3831A2cC3", "Address of the Ethereum contract")
 	flag.IntVar(&workerCount, "workerCount", 10, "Number of concurrent mining workers")
 
 	logger.SetFormatter(&logrus.TextFormatter{
@@ -39,7 +39,7 @@ func init() {
 	})
 }
 
-func mineWorker(ctx context.Context, wg *sync.WaitGroup, contract *abi.PoWERC20, fromAddress common.Address, client *ethclient.Client, auth *bind.TransactOpts, resultChan chan<- *big.Int, errorChan chan<- error, challenge *big.Int, target *big.Int, hashCountChan chan<- int) {
+func mineWorker(ctx context.Context, wg *sync.WaitGroup, fromAddress common.Address, client *ethclient.Client, resultChan chan<- *big.Int, errorChan chan<- error, challenge *big.Int, target *big.Int, hashCountChan chan<- int) {
 	defer wg.Done()
 
 	var nonce *big.Int
@@ -109,7 +109,7 @@ func main() {
 	}
 
 	contractAddr := common.HexToAddress(contractAddress)
-	contract, err := abi.NewPoWERC20(contractAddr, client)
+	contract, err := powerc20.NewPowerc20(contractAddr, client)
 	if err != nil {
 		logger.Fatalf("Failed to instantiate a Token contract: %v", err)
 	}
@@ -165,7 +165,7 @@ func main() {
 	var wg sync.WaitGroup
 	for i := 0; i < workerCount; i++ {
 		wg.Add(1)
-		go mineWorker(ctx, &wg, contract, auth.From, client, auth, resultChan, errorChan, challenge, target, hashCountChan)
+		go mineWorker(ctx, &wg, auth.From, client, resultChan, errorChan, challenge, target, hashCountChan)
 	}
 
 	select {
@@ -174,16 +174,9 @@ func main() {
 		cancel()
 		wg.Wait()
 		logger.Infof(color.GreenString("Successfully discovered a valid nonce: %d"), nonce)
-		logger.Info(color.YellowString("Submitting mining transaction with nonce..."))
-		tx, err := contract.Mine(auth, nonce)
-		if err != nil {
-			logger.Fatalf("Failed to submit mine transaction: %v", err)
-		}
-		receipt, err := bind.WaitMined(context.Background(), client, tx)
-		if err != nil {
-			logger.Fatalf("Failed to mine the transaction: %v", err)
-		}
-		logger.Infof(color.GreenString("Mining transaction successfully confirmed, Transaction Hash: %s"), color.CyanString(receipt.TxHash.Hex()))
+		cmd := fmt.Sprintf(`ioctl ws message send --project-id 20000 --project-version "0.1" --data "{\"nonce\": \"%s\"}"`, nonce.String())
+
+		logger.Infof(color.GreenString("Use this cmd to submit nonce: %s"), color.CyanString(cmd))
 
 	case err := <-errorChan:
 		cancel()
@@ -192,4 +185,3 @@ func main() {
 	}
 	logger.Info(color.GreenString("Mining process successfully completed"))
 }
-
