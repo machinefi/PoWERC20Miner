@@ -6,6 +6,9 @@ import (
 	"flag"
 	"fmt"
 	"math/big"
+	"os/exec"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -39,7 +42,15 @@ func init() {
 	})
 }
 
-func mineWorker(ctx context.Context, wg *sync.WaitGroup, fromAddress common.Address, client *ethclient.Client, resultChan chan<- *big.Int, errorChan chan<- error, challenge *big.Int, target *big.Int, hashCountChan chan<- int) {
+type result struct {
+	challenge  string
+	address    string
+	nonce      string
+	difficulty string
+	diff       string
+}
+
+func mineWorker(ctx context.Context, wg *sync.WaitGroup, diffStr, challengeStr, address string, fromAddress common.Address, client *ethclient.Client, resultChan chan<- *result, errorChan chan<- error, challenge *big.Int, target *big.Int, hashCountChan chan<- int) {
 	defer wg.Done()
 
 	var nonce *big.Int
@@ -55,20 +66,51 @@ func mineWorker(ctx context.Context, wg *sync.WaitGroup, fromAddress common.Addr
 				errorChan <- fmt.Errorf("failed to generate random nonce: %v", err)
 				return
 			}
+			fmt.Println(nonce)
 
 			noncePadded := common.LeftPadBytes(nonce.Bytes(), 32)
-			challengePadded := common.LeftPadBytes(challenge.Bytes(), 32)
-			addressBytes := fromAddress.Bytes()
-			data := append(challengePadded, append(addressBytes, noncePadded...)...)
-			hash := crypto.Keccak256Hash(data)
-			if hash.Big().Cmp(target) == -1 {
-				resultChan <- nonce
+			nonceStr := "0x" + fmt.Sprintf("%x", noncePadded)
+			diff, difficulty, err := getDifficultyAndDiff(diffStr, challengeStr, nonceStr, address)
+			// diff := ""
+			// difficulty := ""
+			// err = errors.New("")
+			// challengePadded := common.LeftPadBytes(challenge.Bytes(), 32)
+			// addressBytes := fromAddress.Bytes()
+			// data := append(challengePadded, append(addressBytes, noncePadded...)...)
+			// hash := crypto.Keccak256Hash(data)
+			// if hash.Big().Cmp(target) == -1 {
+			// 	resultChan <- nonce
+			// 	return
+			// }
+			if err == nil {
+				resultChan <- &result{
+					challenge:  challengeStr,
+					address:    address,
+					nonce:      nonceStr,
+					difficulty: difficulty,
+					diff:       diff,
+				}
 				return
 			}
 			hashCountChan <- 1
-
 		}
 	}
+}
+
+func getDifficultyAndDiff(sourceDifficulty, challenge, nonce, address string) (diff, difficulty string, err error) {
+	cmd := exec.Command("./gen-poseidon-pse", sourceDifficulty, challenge, address, nonce)
+	//fmt.Println("./gen-poseidon-pse", sourceDifficulty, challenge, address, nonce)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return "", "", err
+	}
+	outputs := strings.Split(string(output), ",")
+	if len(outputs) != 2 {
+		logger.Fatalf("Unexpected poseidon result")
+	}
+	diff = strings.TrimPrefix(strings.TrimSpace(outputs[0]), "diff:")
+	difficulty = strings.TrimPrefix(strings.TrimSpace(outputs[1]), "difficulty:")
+	return
 }
 
 func main() {
@@ -96,6 +138,7 @@ func main() {
 	if err != nil {
 		logger.Fatalf("Error in parsing private key: %v", err)
 	}
+	//fmt.Println(crypto.PubkeyToAddress(privateKeyECDSA.PublicKey))
 
 	chainID, err := client.NetworkID(context.Background())
 	if err != nil {
@@ -137,10 +180,14 @@ func main() {
 	target := new(big.Int).Lsh(big.NewInt(1), 256-difficultyUint)
 	logger.Infof(color.GreenString("Target number is: %d"), target)
 
-	resultChan := make(chan *big.Int)
+	resultChan := make(chan *result)
 	errorChan := make(chan error)
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
+	diffStr := strconv.Itoa(int(difficulty.Uint64()))
+	challengeStr := "0x" + fmt.Sprintf("%x", challenge)
+	address := crypto.PubkeyToAddress(privateKeyECDSA.PublicKey).String()
 
 	logger.Info(color.YellowString("Mining workers started..."))
 
@@ -163,9 +210,9 @@ func main() {
 	}()
 
 	var wg sync.WaitGroup
-	for i := 0; i < workerCount; i++ {
+	for i := 0; i < 1; /*workerCount*/ i++ {
 		wg.Add(1)
-		go mineWorker(ctx, &wg, auth.From, client, resultChan, errorChan, challenge, target, hashCountChan)
+		go mineWorker(ctx, &wg, diffStr, challengeStr, address, auth.From, client, resultChan, errorChan, challenge, target, hashCountChan)
 	}
 
 	select {
@@ -174,7 +221,10 @@ func main() {
 		cancel()
 		wg.Wait()
 		logger.Infof(color.GreenString("Successfully discovered a valid nonce: %d"), nonce)
-		cmd := fmt.Sprintf(`ioctl ws message send --project-id 20000 --project-version "0.1" --data "{\"nonce\": \"%s\"}"`, nonce.String())
+
+		fmt.Println(*nonce)
+
+		cmd := fmt.Sprintf(`ioctl ws message send --project-id 20000 --project-version "0.1" --data "{\"nonce\": \"%s\"}"`, nonce.nonce)
 
 		logger.Infof(color.GreenString("Use this cmd to submit nonce: %s"), color.CyanString(cmd))
 
