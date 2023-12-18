@@ -66,7 +66,6 @@ func mineWorker(ctx context.Context, wg *sync.WaitGroup, diffStr, challengeStr, 
 				errorChan <- fmt.Errorf("failed to generate random nonce: %v", err)
 				return
 			}
-			fmt.Println(nonce)
 
 			noncePadded := common.LeftPadBytes(nonce.Bytes(), 32)
 			nonceStr := "0x" + fmt.Sprintf("%x", noncePadded)
@@ -220,11 +219,9 @@ func main() {
 		ticker.Stop()
 		cancel()
 		wg.Wait()
-		logger.Infof(color.GreenString("Successfully discovered a valid nonce: %d"), nonce)
+		logger.Infof(color.GreenString("Successfully discovered a valid nonce: %s"), nonce.nonce)
 
-		fmt.Println(*nonce)
-
-		cmd := fmt.Sprintf(`ioctl ws message send --project-id 20000 --project-version "0.1" --data "{\"nonce\": \"%s\"}"`, nonce.nonce)
+		cmd := fmt.Sprintf(`ioctl ws message send --project-id 20000 --project-version "0.1" --data "{\"challenge\": \"%s\",\"address\": \"%s\",\"nonce\": \"%s\",\"difficulty\": \"%s\",\"diff\": \"%s\"}"`, nonce.challenge, nonce.address, nonce.nonce, nonce.difficulty, nonce.diff)
 
 		logger.Infof(color.GreenString("Use this cmd to submit nonce: %s"), color.CyanString(cmd))
 
