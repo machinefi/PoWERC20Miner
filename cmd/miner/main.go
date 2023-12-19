@@ -97,8 +97,7 @@ func mineWorker(ctx context.Context, wg *sync.WaitGroup, diffStr, challengeStr, 
 }
 
 func getDifficultyAndDiff(sourceDifficulty, challenge, nonce, address string) (diff, difficulty string, err error) {
-	cmd := exec.Command("./gen-poseidon-pse", sourceDifficulty, challenge, address, nonce)
-	//fmt.Println("./gen-poseidon-pse", sourceDifficulty, challenge, address, nonce)
+	cmd := exec.Command("./gen-poseidon-pse.darwin.arm64", sourceDifficulty, challenge, address, nonce)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return "", "", err
