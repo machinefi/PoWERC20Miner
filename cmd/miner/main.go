@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math/big"
 	"os/exec"
+	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -97,7 +98,9 @@ func mineWorker(ctx context.Context, wg *sync.WaitGroup, diffStr, challengeStr, 
 }
 
 func getDifficultyAndDiff(sourceDifficulty, challenge, nonce, address string) (diff, difficulty string, err error) {
-	cmd := exec.Command("./gen-poseidon-pse.darwin.arm64", sourceDifficulty, challenge, address, nonce)
+	bin := "./gen-poseidon-pse.darwin."
+	bin += runtime.GOARCH
+	cmd := exec.Command(bin, sourceDifficulty, challenge, address, nonce)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return "", "", err
