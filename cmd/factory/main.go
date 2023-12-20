@@ -17,17 +17,18 @@ import (
 )
 
 var (
-	name                   string
-	symbol                 string
-	totalSupply            uint64
-	decimals               uint64
-	difficulty             uint64
-	mintLimitPerAddress    uint64
-	limitPerMint           uint64
-	privateKey             string
-	factoryContractAddress string
-	chainEndpoint          = "https://babel-api.testnet.iotex.io"
-	logger                 = logrus.New()
+	name                    string
+	symbol                  string
+	totalSupply             uint64
+	decimals                uint64
+	difficulty              uint64
+	mintLimitPerAddress     uint64
+	limitPerMint            uint64
+	privateKey              string
+	factoryContractAddress  string
+	verifierContractAddress string
+	chainEndpoint           = "https://babel-api.testnet.iotex.io"
+	logger                  = logrus.New()
 )
 
 func init() {
@@ -39,7 +40,8 @@ func init() {
 	flag.Uint64Var(&mintLimitPerAddress, "mintLimitPerAddress", 200000000, "mint limit per address")
 	flag.Uint64Var(&limitPerMint, "limitPerMint", 1000, "limit per mint")
 	flag.StringVar(&privateKey, "privateKey", "", "Private key for the IoTeX account")
-	flag.StringVar(&factoryContractAddress, "factoryContractAddress", "0x9022EBc5b1A7aCa3990D6e369007d77D26E77d0D", "Address of the factory contract")
+	flag.StringVar(&factoryContractAddress, "factoryContractAddress", "0xedBC3fdD7f2dc2065Fe119a3c50134DA152F1b00", "Address of the factory contract")
+	flag.StringVar(&verifierContractAddress, "verifierContractAddress", "0x2feab91823fc5e46e20a1ac6f1e9c0b221de2cad", "Address of the verifier contract")
 
 	logger.SetFormatter(&logrus.TextFormatter{
 		FullTimestamp:   true,
@@ -83,8 +85,10 @@ func main() {
 	}
 	logger.Info(color.GreenString("PoWERC20Factory token contract successfully instantiated."))
 
+	verifyContractAddr := common.HexToAddress("verifierContractAddress")
+
 	tx, err := contract.CreatePoWERC20(auth, name, symbol, new(big.Int).SetUint64(totalSupply), uint8(decimals),
-		new(big.Int).SetUint64(difficulty), new(big.Int).SetUint64(mintLimitPerAddress), new(big.Int).SetUint64(limitPerMint))
+		new(big.Int).SetUint64(difficulty), new(big.Int).SetUint64(mintLimitPerAddress), new(big.Int).SetUint64(limitPerMint), verifyContractAddr)
 	if err != nil {
 		logger.Fatalf("Failed to submit factory transaction: %v", err)
 	}
@@ -98,5 +102,5 @@ func main() {
 	if err != nil {
 		logger.Fatalf("Failed to get all contracts: %v", err)
 	}
-	logger.Infof(color.GreenString("Factory all contracts: %v"), color.CyanString("%v", all))
+	logger.Infof(color.GreenString("New powerc20 contract: %v"), color.CyanString("%v", all[len(all)-1]))
 }

@@ -31,7 +31,7 @@ var (
 
 // Powerc20factoryMetaData contains all meta data concerning the Powerc20factory contract.
 var Powerc20factoryMetaData = &bind.MetaData{
-	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newContractAddress\",\"type\":\"address\"}],\"name\":\"PoWERC20Created\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"allContracts\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"symbol\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"_initialSupply\",\"type\":\"uint256\"},{\"internalType\":\"uint8\",\"name\":\"_decimals\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"_difficulty\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_miningLimit\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_initialLimitPerMint\",\"type\":\"uint256\"}],\"name\":\"createPoWERC20\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAllContracts\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalCreatedContracts\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
+	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newContractAddress\",\"type\":\"address\"}],\"name\":\"PoWERC20Created\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"allContracts\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"symbol\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"_initialSupply\",\"type\":\"uint256\"},{\"internalType\":\"uint8\",\"name\":\"_decimals\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"_difficulty\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_miningLimit\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_initialLimitPerMint\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_verifier\",\"type\":\"address\"}],\"name\":\"createPoWERC20\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAllContracts\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalCreatedContracts\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
 }
 
 // Powerc20factoryABI is the input ABI used to generate the binding from.
@@ -273,25 +273,25 @@ func (_Powerc20factory *Powerc20factoryCallerSession) GetTotalCreatedContracts()
 	return _Powerc20factory.Contract.GetTotalCreatedContracts(&_Powerc20factory.CallOpts)
 }
 
-// CreatePoWERC20 is a paid mutator transaction binding the contract method 0xc244a081.
+// CreatePoWERC20 is a paid mutator transaction binding the contract method 0x6b771618.
 //
-// Solidity: function createPoWERC20(string name, string symbol, uint256 _initialSupply, uint8 _decimals, uint256 _difficulty, uint256 _miningLimit, uint256 _initialLimitPerMint) returns(address)
-func (_Powerc20factory *Powerc20factoryTransactor) CreatePoWERC20(opts *bind.TransactOpts, name string, symbol string, _initialSupply *big.Int, _decimals uint8, _difficulty *big.Int, _miningLimit *big.Int, _initialLimitPerMint *big.Int) (*types.Transaction, error) {
-	return _Powerc20factory.contract.Transact(opts, "createPoWERC20", name, symbol, _initialSupply, _decimals, _difficulty, _miningLimit, _initialLimitPerMint)
+// Solidity: function createPoWERC20(string name, string symbol, uint256 _initialSupply, uint8 _decimals, uint256 _difficulty, uint256 _miningLimit, uint256 _initialLimitPerMint, address _verifier) returns(address)
+func (_Powerc20factory *Powerc20factoryTransactor) CreatePoWERC20(opts *bind.TransactOpts, name string, symbol string, _initialSupply *big.Int, _decimals uint8, _difficulty *big.Int, _miningLimit *big.Int, _initialLimitPerMint *big.Int, _verifier common.Address) (*types.Transaction, error) {
+	return _Powerc20factory.contract.Transact(opts, "createPoWERC20", name, symbol, _initialSupply, _decimals, _difficulty, _miningLimit, _initialLimitPerMint, _verifier)
 }
 
-// CreatePoWERC20 is a paid mutator transaction binding the contract method 0xc244a081.
+// CreatePoWERC20 is a paid mutator transaction binding the contract method 0x6b771618.
 //
-// Solidity: function createPoWERC20(string name, string symbol, uint256 _initialSupply, uint8 _decimals, uint256 _difficulty, uint256 _miningLimit, uint256 _initialLimitPerMint) returns(address)
-func (_Powerc20factory *Powerc20factorySession) CreatePoWERC20(name string, symbol string, _initialSupply *big.Int, _decimals uint8, _difficulty *big.Int, _miningLimit *big.Int, _initialLimitPerMint *big.Int) (*types.Transaction, error) {
-	return _Powerc20factory.Contract.CreatePoWERC20(&_Powerc20factory.TransactOpts, name, symbol, _initialSupply, _decimals, _difficulty, _miningLimit, _initialLimitPerMint)
+// Solidity: function createPoWERC20(string name, string symbol, uint256 _initialSupply, uint8 _decimals, uint256 _difficulty, uint256 _miningLimit, uint256 _initialLimitPerMint, address _verifier) returns(address)
+func (_Powerc20factory *Powerc20factorySession) CreatePoWERC20(name string, symbol string, _initialSupply *big.Int, _decimals uint8, _difficulty *big.Int, _miningLimit *big.Int, _initialLimitPerMint *big.Int, _verifier common.Address) (*types.Transaction, error) {
+	return _Powerc20factory.Contract.CreatePoWERC20(&_Powerc20factory.TransactOpts, name, symbol, _initialSupply, _decimals, _difficulty, _miningLimit, _initialLimitPerMint, _verifier)
 }
 
-// CreatePoWERC20 is a paid mutator transaction binding the contract method 0xc244a081.
+// CreatePoWERC20 is a paid mutator transaction binding the contract method 0x6b771618.
 //
-// Solidity: function createPoWERC20(string name, string symbol, uint256 _initialSupply, uint8 _decimals, uint256 _difficulty, uint256 _miningLimit, uint256 _initialLimitPerMint) returns(address)
-func (_Powerc20factory *Powerc20factoryTransactorSession) CreatePoWERC20(name string, symbol string, _initialSupply *big.Int, _decimals uint8, _difficulty *big.Int, _miningLimit *big.Int, _initialLimitPerMint *big.Int) (*types.Transaction, error) {
-	return _Powerc20factory.Contract.CreatePoWERC20(&_Powerc20factory.TransactOpts, name, symbol, _initialSupply, _decimals, _difficulty, _miningLimit, _initialLimitPerMint)
+// Solidity: function createPoWERC20(string name, string symbol, uint256 _initialSupply, uint8 _decimals, uint256 _difficulty, uint256 _miningLimit, uint256 _initialLimitPerMint, address _verifier) returns(address)
+func (_Powerc20factory *Powerc20factoryTransactorSession) CreatePoWERC20(name string, symbol string, _initialSupply *big.Int, _decimals uint8, _difficulty *big.Int, _miningLimit *big.Int, _initialLimitPerMint *big.Int, _verifier common.Address) (*types.Transaction, error) {
+	return _Powerc20factory.Contract.CreatePoWERC20(&_Powerc20factory.TransactOpts, name, symbol, _initialSupply, _decimals, _difficulty, _miningLimit, _initialLimitPerMint, _verifier)
 }
 
 // Powerc20factoryPoWERC20CreatedIterator is returned from FilterPoWERC20Created and is used to iterate over the raw logs and unpacked data for PoWERC20Created events raised by the Powerc20factory contract.
