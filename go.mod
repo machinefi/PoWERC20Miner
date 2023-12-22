@@ -6,6 +6,7 @@ require (
 	github.com/ethereum/go-ethereum v1.13.5
 	github.com/fatih/color v1.16.0
 	github.com/gosuri/uilive v0.0.4
+	github.com/machinefi/go-iden3-crypto v0.0.0-20231222012027-42c1f56d1b3c
 	github.com/sirupsen/logrus v1.9.3
 )
 

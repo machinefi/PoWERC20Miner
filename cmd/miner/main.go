@@ -1,19 +1,15 @@
 package main
 
 import (
+	"Powerc20Worker/abi/powerc20"
 	"context"
 	"crypto/rand"
+	"errors"
 	"flag"
 	"fmt"
 	"math/big"
-	"os/exec"
-	"runtime"
-	"strconv"
-	"strings"
 	"sync"
 	"time"
-
-	"Powerc20Worker/abi/powerc20"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -21,6 +17,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/fatih/color"
 	"github.com/gosuri/uilive"
+	"github.com/machinefi/go-iden3-crypto/poseidon"
 	"github.com/sirupsen/logrus"
 )
 
@@ -51,7 +48,7 @@ type result struct {
 	diff       string
 }
 
-func mineWorker(ctx context.Context, wg *sync.WaitGroup, diffStr, challengeStr, address string, fromAddress common.Address, client *ethclient.Client, resultChan chan<- *result, errorChan chan<- error, challenge *big.Int, target *big.Int, hashCountChan chan<- int) {
+func mineWorker(ctx context.Context, wg *sync.WaitGroup, difficulty *big.Int, challengeStr, address string, fromAddress common.Address, client *ethclient.Client, resultChan chan<- *result, errorChan chan<- error, challenge *big.Int, target *big.Int, hashCountChan chan<- int) {
 	defer wg.Done()
 
 	var nonce *big.Int
@@ -69,8 +66,8 @@ func mineWorker(ctx context.Context, wg *sync.WaitGroup, diffStr, challengeStr, 
 			}
 
 			noncePadded := common.LeftPadBytes(nonce.Bytes(), 32)
-			nonceStr := "0x" + fmt.Sprintf("%x", noncePadded)
-			diff, difficulty, err := getDifficultyAndDiff(diffStr, challengeStr, nonceStr, address)
+			nonceStr := fmt.Sprintf("%x", noncePadded)
+			diff, difficulty, err := getDifficultyAndDiff(difficulty, challengeStr, nonceStr, address)
 			// diff := ""
 			// difficulty := ""
 			// err = errors.New("")
@@ -97,21 +94,28 @@ func mineWorker(ctx context.Context, wg *sync.WaitGroup, diffStr, challengeStr, 
 	}
 }
 
-func getDifficultyAndDiff(sourceDifficulty, challenge, nonce, address string) (diff, difficulty string, err error) {
-	bin := "./gen-poseidon-pse.darwin."
-	bin += runtime.GOARCH
-	cmd := exec.Command(bin, sourceDifficulty, challenge, address, nonce)
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		return "", "", err
+func getDifficultyAndDiff(difficulty *big.Int, challenge, nonce, address string) (string, string, error) {
+	challengeBI := new(big.Int)
+	challengeBI.SetString(challenge, 16)
+	nonceBI := new(big.Int)
+	nonceBI.SetString(nonce, 16)
+	addressBI := new(big.Int)
+	addressBI.SetString(address[2:], 16)
+
+	poseidonHash, _ := poseidon.HashWithWidth([]*big.Int{challengeBI, addressBI, nonceBI}, 5)
+
+	bigMax := new(big.Int).Lsh(big.NewInt(1), 256)
+	bigMax = bigMax.Sub(bigMax, big.NewInt(1))
+	difficultyBI := bigMax.Rsh(bigMax, uint(difficulty.Uint64()))
+
+	if poseidonHash.Cmp(difficultyBI) > 0 {
+		return "", "", errors.New(
+			fmt.Sprintf("hash %s is greater than difficulty %s", poseidonHash.String(), difficultyBI.String()))
 	}
-	outputs := strings.Split(string(output), ",")
-	if len(outputs) != 2 {
-		logger.Fatalf("Unexpected poseidon result")
-	}
-	diff = strings.TrimPrefix(strings.TrimSpace(outputs[0]), "diff:")
-	difficulty = strings.TrimPrefix(strings.TrimSpace(outputs[1]), "difficulty:")
-	return
+
+	diffBI := new(big.Int)
+	diffBI = diffBI.Sub(difficultyBI, poseidonHash)
+	return diffBI.String(), difficultyBI.String(), nil
 }
 
 func main() {
@@ -186,8 +190,8 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	diffStr := strconv.Itoa(int(difficulty.Uint64()))
-	challengeStr := "0x" + fmt.Sprintf("%x", challenge)
+	//diffStr := strconv.Itoa(int(difficulty.Uint64()))
+	challengeStr := fmt.Sprintf("%x", challenge)
 	address := crypto.PubkeyToAddress(privateKeyECDSA.PublicKey).String()
 
 	logger.Info(color.YellowString("Mining workers started..."))
@@ -213,7 +217,7 @@ func main() {
 	var wg sync.WaitGroup
 	for i := 0; i < 1; /*workerCount*/ i++ {
 		wg.Add(1)
-		go mineWorker(ctx, &wg, diffStr, challengeStr, address, auth.From, client, resultChan, errorChan, challenge, target, hashCountChan)
+		go mineWorker(ctx, &wg, difficulty, challengeStr, address, auth.From, client, resultChan, errorChan, challenge, target, hashCountChan)
 	}
 
 	select {
