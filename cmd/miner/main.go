@@ -102,7 +102,10 @@ func getDifficultyAndDiff(difficulty *big.Int, challenge, nonce, address string)
 	addressBI := new(big.Int)
 	addressBI.SetString(address[2:], 16)
 
-	poseidonHash, _ := poseidon.HashWithWidth([]*big.Int{challengeBI, addressBI, nonceBI}, 5)
+	poseidonHash, err := poseidon.HashWithWidth([]*big.Int{challengeBI, addressBI, nonceBI}, 5)
+	if err != nil {
+		return "", "", err
+	}
 
 	bigMax := new(big.Int).Lsh(big.NewInt(1), 256)
 	bigMax = bigMax.Sub(bigMax, big.NewInt(1))
