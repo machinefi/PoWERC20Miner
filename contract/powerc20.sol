@@ -631,14 +631,10 @@ contract PoWERC20 is ERC20 {
     uint8 private _decimals;
 
     address public verifier;
+    bytes32 public difficultyFr
 
     mapping(address => uint256) public miningTimes;
     mapping(address => mapping(uint256 => bool)) public minedNonces;
-
-    // bytes32 public difficultyFr; // 2
-    // bytes32 public senderFr; // 0x470Eb48290776c370ffAd6224364a604AedfE7B9
-    // bytes32 public nonceFr; // 0x0000000000000000000000000000000000000000000000000000000000000002
-    // bytes public callData;
 
     constructor(
         string memory name,
@@ -657,6 +653,8 @@ contract PoWERC20 is ERC20 {
         totalSupplyCap = _initialSupply * (10 ** uint256(_decimals));
         miningLimit = _miningLimit;
         verifier = _verifier;
+
+        difficultyFr = uint256ToFr(~uint256(0) >> difficulty);
     }
 
     function mine(uint256 nonce, address sender, bytes calldata proof) public {
@@ -670,11 +668,9 @@ contract PoWERC20 is ERC20 {
             "Nonce already used for mining"
         );
 
-        bytes32 difficultyFr = uint256ToFr(~uint256(0) >> difficulty); // 2
-        bytes32 senderFr = uint256ToFr(uint256(uint160(sender))); // 0x0000000000000000000000000000000000000000000000000000000000000001
-        bytes32 nonceFr = uint256ToFr(nonce); // 0x0000000000000000000000000000000000000000000000000000000000000002
+        bytes32 senderFr = uint256ToFr(uint256(uint160(sender)));
+        bytes32 nonceFr = uint256ToFr(nonce);
         bytes memory callData = abi.encodePacked(difficultyFr, senderFr, nonceFr, proof);
-        //  difficulty powerc.sender nonce(public) proof = calldata 
 
         (bool success,) = verifier.staticcall(callData);
         require(success, "Failed to verify proof");
@@ -688,10 +684,6 @@ contract PoWERC20 is ERC20 {
     function uint256ToFr(uint256 _value) public pure returns (bytes32) {
         return bytes32(_value % bn254Prime);
     }
-
-    // function encodeCallData(bytes32 _difficulty, bytes32 _senderFr, bytes32 _nonceFr, bytes memory _proof) public pure returns (bytes memory) {
-    //     return abi.encodePacked(_difficulty, _senderFr, _nonceFr, _proof);
-    // }
 
     function transfer(
         address to,
