@@ -1,2 +1,6 @@
 *.abi
 abigen
+
+circuit/**/target/
+circuit/**/pkg/
+
