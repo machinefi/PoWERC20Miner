@@ -1,4 +1,4 @@
-module Powerc20Worker
+module depinrc-20
 
 go 1.21.4
 

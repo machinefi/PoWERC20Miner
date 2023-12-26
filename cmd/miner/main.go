@@ -1,7 +1,6 @@
 package main
 
 import (
-	"Powerc20Worker/abi/powerc20"
 	"context"
 	"crypto/rand"
 	"errors"
@@ -10,6 +9,8 @@ import (
 	"math/big"
 	"sync"
 	"time"
+
+	"depinrc-20/abi/powerc20"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"

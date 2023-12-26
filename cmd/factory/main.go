@@ -5,7 +5,7 @@ import (
 	"flag"
 	"math/big"
 
-	"Powerc20Worker/abi/powerc20factory"
+	"depinrc-20/abi/powerc20factory"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
