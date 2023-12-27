@@ -12,7 +12,6 @@ import (
 
 	"depinrc-20/abi/powerc20"
 
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -49,7 +48,8 @@ type result struct {
 	diff       string
 }
 
-func mineWorker(ctx context.Context, wg *sync.WaitGroup, difficulty *big.Int, challengeStr, address string, fromAddress common.Address, client *ethclient.Client, resultChan chan<- *result, errorChan chan<- error, challenge *big.Int, target *big.Int, hashCountChan chan<- int) {
+func mineWorker(ctx context.Context, wg *sync.WaitGroup, difficulty *big.Int, challengeStr, address string,
+	resultChan chan<- *result, errorChan chan<- error, hashCountChan chan<- int) {
 	defer wg.Done()
 
 	var nonce *big.Int
@@ -69,17 +69,7 @@ func mineWorker(ctx context.Context, wg *sync.WaitGroup, difficulty *big.Int, ch
 			noncePadded := common.LeftPadBytes(nonce.Bytes(), 32)
 			nonceStr := fmt.Sprintf("%x", noncePadded)
 			diff, difficulty, err := getDifficultyAndDiff(difficulty, challengeStr, nonceStr, address)
-			// diff := ""
-			// difficulty := ""
-			// err = errors.New("")
-			// challengePadded := common.LeftPadBytes(challenge.Bytes(), 32)
-			// addressBytes := fromAddress.Bytes()
-			// data := append(challengePadded, append(addressBytes, noncePadded...)...)
-			// hash := crypto.Keccak256Hash(data)
-			// if hash.Big().Cmp(target) == -1 {
-			// 	resultChan <- nonce
-			// 	return
-			// }
+
 			if err == nil {
 				resultChan <- &result{
 					challenge:  challengeStr,
@@ -155,10 +145,10 @@ func main() {
 	}
 	logger.Infof(color.GreenString("Successfully connected to Ethereum network with Chain ID: %v"), chainID)
 
-	auth, err := bind.NewKeyedTransactorWithChainID(privateKeyECDSA, chainID)
-	if err != nil {
-		logger.Fatalf("Failed to create transactor: %v", err)
-	}
+	//auth, err := bind.NewKeyedTransactorWithChainID(privateKeyECDSA, chainID)
+	//if err != nil {
+	//	logger.Fatalf("Failed to create transactor: %v", err)
+	//}
 
 	contractAddr := common.HexToAddress(contractAddress)
 	contract, err := powerc20.NewPowerc20(contractAddr, client)
@@ -172,12 +162,6 @@ func main() {
 		logger.Fatalf("Failed to get contract name: %v", err)
 	}
 	logger.Infof(color.GreenString("Contract Name: %s"), color.RedString(contractName))
-
-	challenge, err := contract.Challenge(nil)
-	if err != nil {
-		logger.Fatalf("Failed to get challenge: %v", err)
-	}
-	logger.Infof(color.GreenString("Current mining challenge number: %d"), challenge)
 
 	difficulty, err := contract.Difficulty(nil)
 	if err != nil {
@@ -194,8 +178,6 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	//diffStr := strconv.Itoa(int(difficulty.Uint64()))
-	challengeStr := fmt.Sprintf("%x", challenge)
 	address := crypto.PubkeyToAddress(privateKeyECDSA.PublicKey).String()
 
 	logger.Info(color.YellowString("Mining workers started..."))
@@ -221,7 +203,7 @@ func main() {
 	var wg sync.WaitGroup
 	for i := 0; i < 1; /*workerCount*/ i++ {
 		wg.Add(1)
-		go mineWorker(ctx, &wg, difficulty, challengeStr, address, auth.From, client, resultChan, errorChan, challenge, target, hashCountChan)
+		go mineWorker(ctx, &wg, difficulty, contractAddr.String(), address, resultChan, errorChan, hashCountChan)
 	}
 
 	select {
