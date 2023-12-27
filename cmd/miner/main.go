@@ -213,8 +213,7 @@ func main() {
 		wg.Wait()
 		logger.Infof(color.GreenString("Successfully discovered a valid nonce: %s"), nonce.nonce)
 
-		cmd := fmt.Sprintf(`ioctl ws message send --project-id 20000 --project-version "0.1" --data 
-			"{\"depinRC20Address\": \"%s\",\"sender\": \"%s\",\"nonce\": \"%s\",\"difficulty\": \"%s\",\"diff\": \"%s\"}"`,
+		cmd := fmt.Sprintf(`ioctl ws message send --project-id 20000 --project-version "0.1" --data "{\"depinRC20Address\": \"%s\",\"sender\": \"%s\",\"nonce\": \"%s\",\"difficulty\": \"%s\",\"diff\": \"%s\"}"`,
 			nonce.contract, nonce.sender, nonce.nonce, nonce.difficulty, nonce.diff)
 
 		logger.Infof(color.GreenString("Use this cmd to submit nonce: %s"), color.CyanString(cmd))
