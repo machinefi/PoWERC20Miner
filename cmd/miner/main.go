@@ -67,7 +67,7 @@ func mineWorker(ctx context.Context, wg *sync.WaitGroup, difficulty *big.Int, co
 			}
 
 			noncePadded := common.LeftPadBytes(nonce.Bytes(), 32)
-			nonceStr := fmt.Sprintf("%x", noncePadded)
+			nonceStr := "0x" + fmt.Sprintf("%x", noncePadded)
 			diff, difficulty, err := getDifficultyAndDiff(difficulty, contractAddress, nonceStr, sender)
 
 			if err == nil {
@@ -85,15 +85,15 @@ func mineWorker(ctx context.Context, wg *sync.WaitGroup, difficulty *big.Int, co
 	}
 }
 
-func getDifficultyAndDiff(difficulty *big.Int, challenge, nonce, address string) (string, string, error) {
-	challengeBI := new(big.Int)
-	challengeBI.SetString(challenge, 16)
+func getDifficultyAndDiff(difficulty *big.Int, contract, nonce, address string) (string, string, error) {
+	contractBI := new(big.Int)
+	contractBI.SetString(contract[2:], 16)
 	nonceBI := new(big.Int)
-	nonceBI.SetString(nonce, 16)
+	nonceBI.SetString(nonce[2:], 16)
 	addressBI := new(big.Int)
 	addressBI.SetString(address[2:], 16)
 
-	poseidonHash, err := poseidon.HashWithWidth([]*big.Int{challengeBI, addressBI, nonceBI}, 5)
+	poseidonHash, err := poseidon.HashWithWidth([]*big.Int{contractBI, addressBI, nonceBI}, 5)
 	if err != nil {
 		return "", "", err
 	}
