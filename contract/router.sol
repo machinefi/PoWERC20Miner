@@ -9,8 +9,8 @@ interface IDepinRC20 {
 contract DepinRCRouterContract {
     IDepinRC20 public depinRC20;
 
-    function mine(address _depinRC20, uint256 nonce, address sender, bytes calldata proof) public {
-        depinRC20 = IDepinRC20(_depinRC20);
+    function mine(address depinRC20Address, uint256 nonce, address sender, bytes calldata proof) public {
+        depinRC20 = IDepinRC20(depinRC20Address);
         depinRC20.mine(nonce, sender, proof);
     }
 }

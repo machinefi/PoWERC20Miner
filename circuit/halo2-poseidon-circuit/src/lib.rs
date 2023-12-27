@@ -24,13 +24,13 @@ pub fn prove(input: &str) -> std::string::String {
     let item_str = input_v.as_array().unwrap()[0].as_str().unwrap();
     let v: JsonValue = serde_json::from_str(&item_str).unwrap();
 
-    let challenge = hex_to_field(&v["challenge"].as_str().unwrap());
-    let address = hex_to_field(&v["address"].as_str().unwrap());
+    let contract = hex_to_field(&v["depinRC20Address"].as_str().unwrap());
+    let sender = hex_to_field(&v["sender"].as_str().unwrap());
     let nonce = hex_to_field(v["nonce"].as_str().unwrap());
     let difficulty = u256_to_field(&U256::from_dec_str(&v["difficulty"].as_str().unwrap()).unwrap());
     let diff = u256_to_field(&U256::from_dec_str(&v["diff"].as_str().unwrap()).unwrap());
 
-    let inputs: Vec<Fr> = vec![challenge, address, nonce];
+    let inputs: Vec<Fr> = vec![contract, sender, nonce];
 
     // TODO replace your params
     // invoke gen_srs() to get your params
@@ -57,7 +57,7 @@ pub fn prove(input: &str) -> std::string::String {
     };
 
     // TODO public info
-    let instances = vec![vec![difficulty, challenge, address, nonce]];
+    let instances = vec![vec![difficulty, contract, sender, nonce]];
 
     let proof = gen_proof(&params, &pk, circuit.clone(), &instances);
     let calldata = encode_calldata(&instances, &proof);

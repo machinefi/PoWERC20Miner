@@ -41,14 +41,14 @@ func init() {
 }
 
 type result struct {
-	challenge  string
-	address    string
+	contract   string
+	sender     string
 	nonce      string
 	difficulty string
 	diff       string
 }
 
-func mineWorker(ctx context.Context, wg *sync.WaitGroup, difficulty *big.Int, challengeStr, address string,
+func mineWorker(ctx context.Context, wg *sync.WaitGroup, difficulty *big.Int, contractAddress, sender string,
 	resultChan chan<- *result, errorChan chan<- error, hashCountChan chan<- int) {
 	defer wg.Done()
 
@@ -68,12 +68,12 @@ func mineWorker(ctx context.Context, wg *sync.WaitGroup, difficulty *big.Int, ch
 
 			noncePadded := common.LeftPadBytes(nonce.Bytes(), 32)
 			nonceStr := fmt.Sprintf("%x", noncePadded)
-			diff, difficulty, err := getDifficultyAndDiff(difficulty, challengeStr, nonceStr, address)
+			diff, difficulty, err := getDifficultyAndDiff(difficulty, contractAddress, nonceStr, sender)
 
 			if err == nil {
 				resultChan <- &result{
-					challenge:  challengeStr,
-					address:    address,
+					contract:   contractAddress,
+					sender:     sender,
 					nonce:      nonceStr,
 					difficulty: difficulty,
 					diff:       diff,
@@ -178,7 +178,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	address := crypto.PubkeyToAddress(privateKeyECDSA.PublicKey).String()
+	sender := crypto.PubkeyToAddress(privateKeyECDSA.PublicKey).String()
 
 	logger.Info(color.YellowString("Mining workers started..."))
 
@@ -203,7 +203,7 @@ func main() {
 	var wg sync.WaitGroup
 	for i := 0; i < 1; /*workerCount*/ i++ {
 		wg.Add(1)
-		go mineWorker(ctx, &wg, difficulty, contractAddr.String(), address, resultChan, errorChan, hashCountChan)
+		go mineWorker(ctx, &wg, difficulty, contractAddr.String(), sender, resultChan, errorChan, hashCountChan)
 	}
 
 	select {
@@ -213,7 +213,9 @@ func main() {
 		wg.Wait()
 		logger.Infof(color.GreenString("Successfully discovered a valid nonce: %s"), nonce.nonce)
 
-		cmd := fmt.Sprintf(`ioctl ws message send --project-id 20000 --project-version "0.1" --data "{\"challenge\": \"%s\",\"address\": \"%s\",\"nonce\": \"%s\",\"difficulty\": \"%s\",\"diff\": \"%s\"}"`, nonce.challenge, nonce.address, nonce.nonce, nonce.difficulty, nonce.diff)
+		cmd := fmt.Sprintf(`ioctl ws message send --project-id 20000 --project-version "0.1" --data 
+			"{\"depinRC20Address\": \"%s\",\"sender\": \"%s\",\"nonce\": \"%s\",\"difficulty\": \"%s\",\"diff\": \"%s\"}"`,
+			nonce.contract, nonce.sender, nonce.nonce, nonce.difficulty, nonce.diff)
 
 		logger.Infof(color.GreenString("Use this cmd to submit nonce: %s"), color.CyanString(cmd))
 
