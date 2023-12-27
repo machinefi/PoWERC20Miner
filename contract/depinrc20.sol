@@ -580,8 +580,8 @@ abstract contract ERC20 is Context, IERC20, IERC20Metadata, IERC20Errors {
     }
 }
 
-contract PoWERC20Factory {
-    event PoWERC20Created(address newContractAddress);
+contract DepinRC20Factory {
+    event DepinRC20Created(address newContractAddress);
 
     address[] public allContracts;
 
@@ -595,7 +595,7 @@ contract PoWERC20Factory {
         uint256 _initialLimitPerMint,
         address _verifier
     ) public returns (address) {
-        PoWERC20 newContract = new PoWERC20(
+        DepinRC20 newContract = new DepinRC20(
             name,
             symbol,
             _initialSupply,
@@ -606,7 +606,7 @@ contract PoWERC20Factory {
             _verifier
         );
         allContracts.push(address(newContract));
-        emit PoWERC20Created(address(newContract));
+        emit DepinRC20Created(address(newContract));
         return address(newContract);
     }
 
@@ -620,7 +620,7 @@ contract PoWERC20Factory {
 }
 
 
-contract PoWERC20 is ERC20 {
+contract DepinRC20 is ERC20 {
     uint256 constant bn254Prime = 21888242871839275222246405745257275088548364400416034343698204186575808495617;
 
     uint256 public difficulty;
@@ -631,7 +631,8 @@ contract PoWERC20 is ERC20 {
     uint8 private _decimals;
 
     address public verifier;
-    bytes32 public difficultyFr
+    bytes32 public difficultyFr;
+    bytes32 public depinRCFr;
 
     mapping(address => uint256) public miningTimes;
     mapping(address => mapping(uint256 => bool)) public minedNonces;
@@ -654,6 +655,7 @@ contract PoWERC20 is ERC20 {
         miningLimit = _miningLimit;
         verifier = _verifier;
 
+        depinRCFr = uint256ToFr(uint256(uint160(address(this))));
         difficultyFr = uint256ToFr(~uint256(0) >> difficulty);
     }
 
@@ -670,7 +672,7 @@ contract PoWERC20 is ERC20 {
 
         bytes32 senderFr = uint256ToFr(uint256(uint160(sender)));
         bytes32 nonceFr = uint256ToFr(nonce);
-        bytes memory callData = abi.encodePacked(difficultyFr, senderFr, nonceFr, proof);
+        bytes memory callData = abi.encodePacked(difficultyFr, depinRCFr, senderFr, nonceFr, proof);
 
         (bool success,) = verifier.staticcall(callData);
         require(success, "Failed to verify proof");

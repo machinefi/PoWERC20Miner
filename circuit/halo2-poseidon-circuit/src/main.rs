@@ -71,7 +71,7 @@ fn main() {
 
     match opts.sub {
         Subcommands::Solidity { file } => {
-            let sol_code = gen_sol_verifier(&params, empty_circuit, vec![3])
+            let sol_code = gen_sol_verifier(&params, empty_circuit, vec![4])
                 .expect("generate solidity file error");
             println!(
                 "Generated verifier contract size: {}",
@@ -160,7 +160,7 @@ fn main() {
 
             // TODO public info
             // let instances = vec![vec![difficulty]];
-            let instances = vec![vec![difficulty, inputs[1], inputs[2]]];
+            let instances = vec![vec![difficulty, inputs[0], inputs[1], inputs[2]]];
 
 
             let proof = gen_proof(&params, &pk, circuit.clone(), &instances);

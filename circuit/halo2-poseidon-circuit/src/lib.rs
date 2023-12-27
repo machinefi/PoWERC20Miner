@@ -57,7 +57,7 @@ pub fn prove(input: &str) -> std::string::String {
     };
 
     // TODO public info
-    let instances = vec![vec![difficulty, address, nonce]];
+    let instances = vec![vec![difficulty, challenge, address, nonce]];
 
     let proof = gen_proof(&params, &pk, circuit.clone(), &instances);
     let calldata = encode_calldata(&instances, &proof);
