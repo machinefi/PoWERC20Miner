@@ -114,11 +114,12 @@ func getDifficultyAndDiff(difficulty *big.Int, contract, nonce, address string) 
 
 func main() {
 	banner := `
-//  ____    __        _______ ____   ____ ____   ___    __  __ _                 
-// |  _ \ __\ \      / / ____|  _ \ / ___|___ \ / _ \  |  \/  (_)_ __   ___ _ __ 
-// | |_) / _ \ \ /\ / /|  _| | |_) | |     __) | | | | | |\/| | | '_ \ / _ \ '__|
-// |  __/ (_) \ V  V / | |___|  _ <| |___ / __/| |_| | | |  | | | | | |  __/ |   
-// |_|   \___/ \_/\_/  |_____|_| \_\\____|_____|\___/  |_|  |_|_|_| |_|\___|_|   
+// _______   _______ .______    __  .__   __. .______        ______       ___     ___      .___  ___.  __  .__   __.  _______ .______      
+// |       \ |   ____||   _  \  |  | |  \ |  | |   _  \      /      |     |__ \   / _ \     |   \/   | |  | |  \ |  | |   ____||   _  \     
+// |  .--.  ||  |__   |  |_)  | |  | |   \|  | |  |_)  |    |  ,----' ______ ) | | | | |    |  \  /  | |  | |   \|  | |  |__   |  |_)  |    
+// |  |  |  ||   __|  |   ___/  |  | |  .    | |      /     |  |     |______/ /  | | | |    |  |\/|  | |  | |  .    | |   __|  |      /
+// |  '--'  ||  |____ |  |      |  | |  |\   | |  |\  \----.|   ----.      / /_  | |_| |    |  |  |  | |  | |  |\   | |  |____ |  |\  \----.
+// |_______/ |_______|| _|      |__| |__| \__| | _|  ._____| \______|     |____|  \___/     |__|  |__| |__| |__| \__| |_______|| _|  ._____|
 	`
 	fmt.Println(banner)
 	flag.Parse()
@@ -155,7 +156,7 @@ func main() {
 	if err != nil {
 		logger.Fatalf("Failed to instantiate a Token contract: %v", err)
 	}
-	logger.Info(color.GreenString("PoWERC20 token contract successfully instantiated."))
+	logger.Info(color.GreenString("DePinRC20 token contract successfully instantiated."))
 
 	contractName, err := contract.Name(nil)
 	if err != nil {
