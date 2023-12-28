@@ -31,7 +31,7 @@ var (
 
 func init() {
 	flag.StringVar(&privateKey, "privateKey", "", "Private key for the Ethereum account")
-	flag.StringVar(&contractAddress, "contractAddress", "0x53870E89D4E93442ed7FACD68f7C0221B27e5958", "Address of the Ethereum contract")
+	flag.StringVar(&contractAddress, "contractAddress", "0xF0E999b63e74Ad3D9592cDDf47C85E4bb794F0c4", "Address of the Ethereum contract")
 	flag.IntVar(&workerCount, "workerCount", 10, "Number of concurrent mining workers")
 
 	logger.SetFormatter(&logrus.TextFormatter{

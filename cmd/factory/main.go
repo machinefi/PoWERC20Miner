@@ -40,8 +40,8 @@ func init() {
 	flag.Uint64Var(&mintLimitPerAddress, "mintLimitPerAddress", 200000000, "mint limit per address")
 	flag.Uint64Var(&limitPerMint, "limitPerMint", 1000, "limit per mint")
 	flag.StringVar(&privateKey, "privateKey", "", "Private key for the IoTeX account")
-	flag.StringVar(&factoryContractAddress, "factoryContractAddress", "0xedBC3fdD7f2dc2065Fe119a3c50134DA152F1b00", "Address of the factory contract")
-	flag.StringVar(&verifierContractAddress, "verifierContractAddress", "0x2feab91823fc5e46e20a1ac6f1e9c0b221de2cad", "Address of the verifier contract")
+	flag.StringVar(&factoryContractAddress, "factoryContractAddress", "0x2a96010335A9A35ca29CA47D35ed8730cC839b39", "Address of the factory contract")
+	flag.StringVar(&verifierContractAddress, "verifierContractAddress", "0xb9c809BA641EFdAcd6ca34515F87affd1d8Cc1a5", "Address of the verifier contract")
 
 	logger.SetFormatter(&logrus.TextFormatter{
 		FullTimestamp:   true,

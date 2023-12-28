@@ -31,7 +31,7 @@ var (
 
 // Powerc20factoryMetaData contains all meta data concerning the Powerc20factory contract.
 var Powerc20factoryMetaData = &bind.MetaData{
-	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newContractAddress\",\"type\":\"address\"}],\"name\":\"PoWERC20Created\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"allContracts\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"symbol\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"_initialSupply\",\"type\":\"uint256\"},{\"internalType\":\"uint8\",\"name\":\"_decimals\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"_difficulty\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_miningLimit\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_initialLimitPerMint\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_verifier\",\"type\":\"address\"}],\"name\":\"createPoWERC20\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAllContracts\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalCreatedContracts\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
+	ABI: "[{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"symbol\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"_initialSupply\",\"type\":\"uint256\"},{\"internalType\":\"uint8\",\"name\":\"_decimals\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"_difficulty\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_miningLimit\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_initialLimitPerMint\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_verifier\",\"type\":\"address\"}],\"name\":\"createPoWERC20\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newContractAddress\",\"type\":\"address\"}],\"name\":\"DepinRC20Created\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"allContracts\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getAllContracts\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalCreatedContracts\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]",
 }
 
 // Powerc20factoryABI is the input ABI used to generate the binding from.
@@ -294,9 +294,9 @@ func (_Powerc20factory *Powerc20factoryTransactorSession) CreatePoWERC20(name st
 	return _Powerc20factory.Contract.CreatePoWERC20(&_Powerc20factory.TransactOpts, name, symbol, _initialSupply, _decimals, _difficulty, _miningLimit, _initialLimitPerMint, _verifier)
 }
 
-// Powerc20factoryPoWERC20CreatedIterator is returned from FilterPoWERC20Created and is used to iterate over the raw logs and unpacked data for PoWERC20Created events raised by the Powerc20factory contract.
-type Powerc20factoryPoWERC20CreatedIterator struct {
-	Event *Powerc20factoryPoWERC20Created // Event containing the contract specifics and raw log
+// Powerc20factoryDepinRC20CreatedIterator is returned from FilterDepinRC20Created and is used to iterate over the raw logs and unpacked data for DepinRC20Created events raised by the Powerc20factory contract.
+type Powerc20factoryDepinRC20CreatedIterator struct {
+	Event *Powerc20factoryDepinRC20Created // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -310,7 +310,7 @@ type Powerc20factoryPoWERC20CreatedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *Powerc20factoryPoWERC20CreatedIterator) Next() bool {
+func (it *Powerc20factoryDepinRC20CreatedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -319,7 +319,7 @@ func (it *Powerc20factoryPoWERC20CreatedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(Powerc20factoryPoWERC20Created)
+			it.Event = new(Powerc20factoryDepinRC20Created)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -334,7 +334,7 @@ func (it *Powerc20factoryPoWERC20CreatedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(Powerc20factoryPoWERC20Created)
+		it.Event = new(Powerc20factoryDepinRC20Created)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -350,41 +350,41 @@ func (it *Powerc20factoryPoWERC20CreatedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *Powerc20factoryPoWERC20CreatedIterator) Error() error {
+func (it *Powerc20factoryDepinRC20CreatedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *Powerc20factoryPoWERC20CreatedIterator) Close() error {
+func (it *Powerc20factoryDepinRC20CreatedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// Powerc20factoryPoWERC20Created represents a PoWERC20Created event raised by the Powerc20factory contract.
-type Powerc20factoryPoWERC20Created struct {
+// Powerc20factoryDepinRC20Created represents a DepinRC20Created event raised by the Powerc20factory contract.
+type Powerc20factoryDepinRC20Created struct {
 	NewContractAddress common.Address
 	Raw                types.Log // Blockchain specific contextual infos
 }
 
-// FilterPoWERC20Created is a free log retrieval operation binding the contract event 0xe8d9455984bba86631742a4cfd8a6e4e82aedcc39a116c966eebebc47330e11b.
+// FilterDepinRC20Created is a free log retrieval operation binding the contract event 0x76a13cb94fecaacc8933ea56f2efaeec868b5240f3c02b3dee7fdbfec410bf59.
 //
-// Solidity: event PoWERC20Created(address newContractAddress)
-func (_Powerc20factory *Powerc20factoryFilterer) FilterPoWERC20Created(opts *bind.FilterOpts) (*Powerc20factoryPoWERC20CreatedIterator, error) {
+// Solidity: event DepinRC20Created(address newContractAddress)
+func (_Powerc20factory *Powerc20factoryFilterer) FilterDepinRC20Created(opts *bind.FilterOpts) (*Powerc20factoryDepinRC20CreatedIterator, error) {
 
-	logs, sub, err := _Powerc20factory.contract.FilterLogs(opts, "PoWERC20Created")
+	logs, sub, err := _Powerc20factory.contract.FilterLogs(opts, "DepinRC20Created")
 	if err != nil {
 		return nil, err
 	}
-	return &Powerc20factoryPoWERC20CreatedIterator{contract: _Powerc20factory.contract, event: "PoWERC20Created", logs: logs, sub: sub}, nil
+	return &Powerc20factoryDepinRC20CreatedIterator{contract: _Powerc20factory.contract, event: "DepinRC20Created", logs: logs, sub: sub}, nil
 }
 
-// WatchPoWERC20Created is a free log subscription operation binding the contract event 0xe8d9455984bba86631742a4cfd8a6e4e82aedcc39a116c966eebebc47330e11b.
+// WatchDepinRC20Created is a free log subscription operation binding the contract event 0x76a13cb94fecaacc8933ea56f2efaeec868b5240f3c02b3dee7fdbfec410bf59.
 //
-// Solidity: event PoWERC20Created(address newContractAddress)
-func (_Powerc20factory *Powerc20factoryFilterer) WatchPoWERC20Created(opts *bind.WatchOpts, sink chan<- *Powerc20factoryPoWERC20Created) (event.Subscription, error) {
+// Solidity: event DepinRC20Created(address newContractAddress)
+func (_Powerc20factory *Powerc20factoryFilterer) WatchDepinRC20Created(opts *bind.WatchOpts, sink chan<- *Powerc20factoryDepinRC20Created) (event.Subscription, error) {
 
-	logs, sub, err := _Powerc20factory.contract.WatchLogs(opts, "PoWERC20Created")
+	logs, sub, err := _Powerc20factory.contract.WatchLogs(opts, "DepinRC20Created")
 	if err != nil {
 		return nil, err
 	}
@@ -394,8 +394,8 @@ func (_Powerc20factory *Powerc20factoryFilterer) WatchPoWERC20Created(opts *bind
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(Powerc20factoryPoWERC20Created)
-				if err := _Powerc20factory.contract.UnpackLog(event, "PoWERC20Created", log); err != nil {
+				event := new(Powerc20factoryDepinRC20Created)
+				if err := _Powerc20factory.contract.UnpackLog(event, "DepinRC20Created", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -416,12 +416,12 @@ func (_Powerc20factory *Powerc20factoryFilterer) WatchPoWERC20Created(opts *bind
 	}), nil
 }
 
-// ParsePoWERC20Created is a log parse operation binding the contract event 0xe8d9455984bba86631742a4cfd8a6e4e82aedcc39a116c966eebebc47330e11b.
+// ParseDepinRC20Created is a log parse operation binding the contract event 0x76a13cb94fecaacc8933ea56f2efaeec868b5240f3c02b3dee7fdbfec410bf59.
 //
-// Solidity: event PoWERC20Created(address newContractAddress)
-func (_Powerc20factory *Powerc20factoryFilterer) ParsePoWERC20Created(log types.Log) (*Powerc20factoryPoWERC20Created, error) {
-	event := new(Powerc20factoryPoWERC20Created)
-	if err := _Powerc20factory.contract.UnpackLog(event, "PoWERC20Created", log); err != nil {
+// Solidity: event DepinRC20Created(address newContractAddress)
+func (_Powerc20factory *Powerc20factoryFilterer) ParseDepinRC20Created(log types.Log) (*Powerc20factoryDepinRC20Created, error) {
+	event := new(Powerc20factoryDepinRC20Created)
+	if err := _Powerc20factory.contract.UnpackLog(event, "DepinRC20Created", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
