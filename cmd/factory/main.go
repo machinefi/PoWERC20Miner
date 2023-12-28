@@ -32,8 +32,8 @@ var (
 )
 
 func init() {
-	flag.StringVar(&name, "name", "PoWERC20-test", "token name")
-	flag.StringVar(&symbol, "symbol", "PoWERC20-test", "abbreviation of the token")
+	flag.StringVar(&name, "name", "DePinRC20-test", "token name")
+	flag.StringVar(&symbol, "symbol", "DePinRC20-test", "abbreviation of the token")
 	flag.Uint64Var(&totalSupply, "totalSupply", 1000000000, "total supply of the token")
 	flag.Uint64Var(&decimals, "decimals", 18, "the number of decimals for the token")
 	flag.Uint64Var(&difficulty, "difficulty", 50, "mining difficulty")
@@ -83,7 +83,7 @@ func main() {
 	if err != nil {
 		logger.Fatalf("Failed to instantiate a Token contract: %v", err)
 	}
-	logger.Info(color.GreenString("PoWERC20Factory token contract successfully instantiated."))
+	logger.Info(color.GreenString("DePinRC20Factory token contract successfully instantiated."))
 
 	verifyContractAddr := common.HexToAddress("verifierContractAddress")
 
@@ -102,5 +102,5 @@ func main() {
 	if err != nil {
 		logger.Fatalf("Failed to get all contracts: %v", err)
 	}
-	logger.Infof(color.GreenString("New powerc20 contract: %v"), color.CyanString("%v", all[len(all)-1]))
+	logger.Infof(color.GreenString("New DePinRC20 contract: %v"), color.CyanString("%v", all[len(all)-1]))
 }
