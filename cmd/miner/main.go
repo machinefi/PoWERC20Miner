@@ -30,13 +30,16 @@ var (
 )
 
 func init() {
-	flag.StringVar(&privateKey, "privateKey", "", "Private key for the Ethereum account")
-	flag.StringVar(&contractAddress, "contractAddress", "0xF0E999b63e74Ad3D9592cDDf47C85E4bb794F0c4", "Address of the Ethereum contract")
+	flag.StringVar(&privateKey, "privateKey", "", "Private key for the IoTex account")
+	flag.StringVar(&contractAddress, "contractAddress", "", "Address of the IoTex DePinRC20 contract")
 	flag.IntVar(&workerCount, "workerCount", 10, "Number of concurrent mining workers")
 
 	logger.SetFormatter(&logrus.TextFormatter{
 		FullTimestamp:   true,
 		TimestampFormat: "2006-01-02 15:04:05",
+	})
+	logger.SetFormatter(&logrus.JSONFormatter{
+		DisableHTMLEscape: true,
 	})
 }
 
