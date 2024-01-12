@@ -63,11 +63,7 @@ pub fn prove(input: &str) -> std::string::String {
     let calldata = encode_calldata(&instances, &proof);
 
     format!(
-        r#"{{
-"proof": "0x{}",
-"calldata": "0x{}"
-}}"#,
+        r#"{}"#,
         hex::encode(&proof),
-        hex::encode(calldata),
     )
 }

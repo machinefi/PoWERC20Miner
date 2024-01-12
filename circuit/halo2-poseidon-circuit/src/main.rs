@@ -133,9 +133,10 @@ fn main() {
             let difficulty = (!U256::from(0)).shr(difficulty_shift);
 
             let hash_result_num = U256::from_little_endian(&hash_result.to_repr()[..]);
+            println!("hash_result_num {:?}", &hash_result_num);
 
-            println!("{:?}", &difficulty.sub(hash_result_num));
-            println!("{:?}", &difficulty);
+            println!("diff {:?}", &difficulty.sub(hash_result_num));
+            println!("difficulty {:?}", &difficulty);
             let diff = u256_to_field(&difficulty.sub(hash_result_num));
             let difficulty = u256_to_field(&difficulty);
             println!("{:?}", &diff);
